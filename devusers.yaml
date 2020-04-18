@@ -1,0 +1,15 @@
+---
+- name: create user and place ssh key
+  hosts: dev
+  become: yes
+  become_method: sudo
+  tasks:
+  - include_vars: users.yaml
+  - name: create user
+    user: name="{{ item.username}}"
+    with_items: "{{ users }}"
+
+
+  - name: placing ssh
+    authorized_key: user="{{item.username}}" key="{{ lookup('file', '/home/{{item.username}}/.ssh/id_rsa.pub')}} " 
+    with_items: "{{ users }}"
